@@ -90,14 +90,35 @@ int main()
 
     bool gameOver = false;
 
+    int nCurrentPiece = 1;
+    int nCurrentRotation = 0;
+    int nCurrentX = nFieldWidth /2;
+    int nCurrentY = 0;
+
     while (!gameOver)
     {
-        /* code */
+        //  Game timitng
+
+        // input
+
+        //  game logic
+
+        // render output
+
+        //draw field 
         for (int x=0; x< nFieldWidth; x++)
             for(int y=0; y<nFieldHeight; y++)
                 screen[(y+2) * nScreenWidth + (x+2)] = " ABCDEFG=#"[pField[y* nFieldWidth + x]];
-        // printw(screen);	
-	    // refresh();	
+        
+        
+        for (int px = 0; px < 4; px++)
+            for (int py = 0; py < 4; py++)
+                if(tetromino[nCurrentPiece][rotate(px,py,nCurrentRotation)] == 'X')
+                {
+                    screen[(nCurrentY + py + 2) * nScreenWidth + (nCurrentX + px +2)] = nCurrentPiece + 65;
+                }
+        
+        // display frame
         wprintw(win, screen);
         wrefresh(win);
     }
