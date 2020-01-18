@@ -88,7 +88,21 @@ int main()
     wrefresh(win);
     wmove(win, 0, 0);
 
-    initscr();
+    bool gameOver = false;
+
+    while (!gameOver)
+    {
+        /* code */
+        for (int x=0; x< nFieldWidth; x++)
+            for(int y=0; y<nFieldHeight; y++)
+                screen[(y+2) * nScreenWidth + (x+2)] = " ABCDEFG=#"[pField[y* nFieldWidth + x]];
+        // printw(screen);	
+	    // refresh();	
+        wprintw(win, screen);
+        wrefresh(win);
+    }
+    
     endwin();
+
     return 0;
 }
