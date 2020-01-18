@@ -3,6 +3,21 @@
 #include <array>
 
 std::array<std::string, 7> tetromino; 
+int rotate(int px, int py, int r)
+{
+    switch (r % 4)
+    {
+        case 0: 
+            return py * 4 + px; //0deg
+        case 1: 
+            return 12 + py - (px * 4); //90deg
+        case 2: 
+            return 15 - (py * 4) - px; //180deg
+        case 3: 
+            return 3 - py + (px * 4); //270deg
+    }
+    return 0;
+}
 int main()
 {
     tetromino[0].append("..X.");
