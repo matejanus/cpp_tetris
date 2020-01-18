@@ -1,10 +1,15 @@
 #include <iostream>
 #include "includes/defines.hpp"
 #include <array>
+#include <curses.h>
 
 std::array<std::string, 7> tetromino; 
-int nFieldWidth = {12};
+
 int nFieldHeight = {18};
+int nFieldWidth = {12};
+
+int nScreenWidth = {80};
+int nScreenHeight = {20};
 unsigned char *pField = nullptr;
 
 int rotate(int px, int py, int r)
@@ -65,9 +70,25 @@ int main()
     {
         for(int y=0; y<nFieldHeight; y++)
         {
-            pField[y*nFieldWidth + x] = (x == 0 || x==nFieldWidth-1 || y==nFieldWidth -1) ? 9 : 0;
+            pField[y*nFieldWidth + x] = (x == 0 || x==nFieldWidth-1 || y==nFieldHeight -1) ? 9 : 0;
         }
     }
 
+
+    char *screen = new char[nScreenWidth*nScreenHeight];
+    for (int i=0; i<nScreenWidth*nScreenHeight; i++)
+    {
+        screen[i] = L' ';
+    }
+
+    initscr();
+
+
+    WINDOW * win = newwin(nScreenHeight, nScreenWidth, 0, 0);
+    wrefresh(win);
+    wmove(win, 0, 0);
+
+    initscr();
+    endwin();
     return 0;
 }
