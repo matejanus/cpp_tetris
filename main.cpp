@@ -28,6 +28,26 @@ int rotate(int px, int py, int r)
     return 0;
 }
 
+bool doesPieceFit(int nTetromino, int nRotaion, int nPosX, int nPosY)
+{
+    for (int x = 0; x < 4; x++)
+        for (int y=0; y<4; y++)
+        {
+            int piece = rotate(x, y, nRotaion);
+
+            int field = (nPosY + y) *nFieldWidth + (nPosX + x);
+
+            if (nPosY + y >= 0 && nPosY + y <nFieldWidth)
+            {
+                if(tetromino[nTetromino][piece] == 'X' && pField[field] !=0)
+                    return false;
+            }
+        }
+
+
+    return true;
+}
+
 int main()
 {
     tetromino[0].append("..X.");
