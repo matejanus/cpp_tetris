@@ -3,6 +3,10 @@
 #include <array>
 
 std::array<std::string, 7> tetromino; 
+int nFieldWidth = {12};
+int nFieldHeight = {18};
+unsigned char *pField = nullptr;
+
 int rotate(int px, int py, int r)
 {
     switch (r % 4)
@@ -18,6 +22,7 @@ int rotate(int px, int py, int r)
     }
     return 0;
 }
+
 int main()
 {
     tetromino[0].append("..X.");
@@ -54,6 +59,15 @@ int main()
     tetromino[6].append("..XX");
     tetromino[6].append("..X.");
     tetromino[6].append("..X.");
+
+    pField = new unsigned char[nFieldWidth * nFieldHeight];
+    for(int x=0; x<nFieldWidth; x++)
+    {
+        for(int y=0; y<nFieldHeight; y++)
+        {
+            pField[y*nFieldWidth + x] = (x == 0 || x==nFieldWidth-1 || y==nFieldWidth -1) ? 9 : 0;
+        }
+    }
 
     return 0;
 }
