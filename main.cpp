@@ -4,13 +4,16 @@
 #include <curses.h>
 #include <chrono>
 #include <thread>
+#include <vector>
+#include <memory>
+#include <random>
 
 using namespace std::chrono_literals;
 
 std::array<std::string, 7> tetromino; 
 
-int nFieldHeight = {18};
-int nFieldWidth = {12};
+const int nFieldHeight = {18};
+const int nFieldWidth = {12};
 
 int nScreenWidth = {80};
 int nScreenHeight = {20};
@@ -93,6 +96,9 @@ int main()
     tetromino[6].append("..X.");
 
     pField = new unsigned char[nFieldWidth * nFieldHeight];
+    // std::array<unsigned char, (nFieldWidth * nFieldHeight)> pField2 = {0};
+    // std::unique_ptr<unsigned char []>
+    // auto pField = std::make_unique<unsigned char[]>(nFieldWidth * nFieldHeight);
     for(int x=0; x<nFieldWidth; x++)
     {
         for(int y=0; y<nFieldHeight; y++)
@@ -122,7 +128,7 @@ int main()
 
     bool gameOver = false;
 
-    int nCurrentPiece = 1;
+   
     int nCurrentRotation = 0;
     int nCurrentX = nFieldWidth /2;
     int nCurrentY = 0;
@@ -133,6 +139,12 @@ int main()
     int nSpeedCounter = 0;
     bool bForceDown = 0;
 
+    std::vector<int> vLines;
+
+    std::random_device dev;
+    std::mt19937 rng(dev());
+    std::uniform_int_distribution<std::mt19937::result_type> gen(0,6);
+     int nCurrentPiece = gen(rng);
     while (!gameOver)
     {
         //  Game timitng
@@ -189,13 +201,13 @@ int main()
                 //lock te current piece
                 for (int px = 0; px < 4; px++)
                     for (int py = 0; py < 4; py++)
-                        if(tetromino[nCurrentPiece][rotate(px,py,nCurrentRotation)] == 'X')
+                        if(tetromino[nCurrentPiece][rotate(px,py,nCurrentRotation)] != '.')
                         {
                             pField[(nCurrentY + py) * nFieldWidth + (nCurrentX + px)] = nCurrentPiece + 1;
                         }
                 //check for horizontal lines
                 for(int py = 0; py<4; py++)
-                    if(nCurrentY + py <nFieldHeight - 1)
+                    if(nCurrentY + py < nFieldHeight - 1)
                     {
                         bool bLine = true;
                         for(int px = 1; px < nFieldWidth - 1; px++)
@@ -203,8 +215,10 @@ int main()
 
                         if(bLine)
                         {
-                             for(int px = 1; px < nFieldWidth - 1; px++)
+                            for(int px = 1; px < nFieldWidth - 1; px++)
                                 pField[(nCurrentY + py) * nFieldWidth + px] = 8;
+                            
+                            vLines.push_back(nCurrentY + py);   
                         }
                     }
 
@@ -212,7 +226,7 @@ int main()
                 nCurrentX = nFieldWidth/2;
                 nCurrentY = 0;
                 nCurrentRotation = 0;
-                nCurrentPiece = rand() % 7;
+                nCurrentPiece = gen(rng);
 
                 //if piece does nof fit
                 gameOver = !doesPieceFit(nCurrentPiece, nCurrentRotation, nCurrentX, nCurrentY);
@@ -234,6 +248,27 @@ int main()
                 {
                     screen[(nCurrentY + py + 2) * nScreenWidth + (nCurrentX + px +2)] = nCurrentPiece + 65;
                 }
+
+        if(!vLines.empty())
+        {
+            wprintw(win, screen);
+            wmove(win, 0, 0);
+            wrefresh(win);
+            std::this_thread::sleep_for(400ms);
+
+            for(auto &v: vLines)
+            {
+                for(int px = 1; px < nFieldWidth - 1; px++)
+                {
+                    for(int py = v; py > 0; py--)
+                    {
+                        pField[py * nFieldWidth + px] = pField[(py - 1) * nFieldWidth + px];
+                    }
+                    pField[px] = 0;
+                }
+            }
+            vLines.clear();
+    }
         
         // display frame
         wprintw(win, screen);
@@ -242,6 +277,7 @@ int main()
     }
     
     endwin();
+    delete[] pField;
 
     return 0;
 }
