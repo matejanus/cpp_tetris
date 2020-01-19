@@ -127,10 +127,19 @@ int main()
     int nCurrentX = nFieldWidth /2;
     int nCurrentY = 0;
 
+    bool bRotateHold = false;
+
+    int nSpeed = 20;
+    int nSpeedCounter = 0;
+    bool bForceDown = 0;
+
     while (!gameOver)
     {
         //  Game timitng
         std::this_thread::sleep_for(50ms);
+        nSpeedCounter++;
+        bForceDown = (nSpeedCounter==nSpeed);
+        
         // input
         bool bKey[4] = {false};
 
@@ -153,13 +162,63 @@ int main()
             default:
                 break;
         }
+        //  game logic
 
         nCurrentX += (bKey[0] && doesPieceFit(nCurrentPiece, nCurrentRotation, nCurrentX + 1, nCurrentY)) ? 1:0;
         nCurrentX -= (bKey[1] && doesPieceFit(nCurrentPiece, nCurrentRotation, nCurrentX - 1, nCurrentY)) ? 1:0;
         nCurrentY += (bKey[2] && doesPieceFit(nCurrentPiece, nCurrentRotation, nCurrentX, nCurrentY + 1)) ? 1:0;
 
-        nCurrentRotation  += (bKey[3] && doesPieceFit(nCurrentPiece, nCurrentRotation + 1, nCurrentX, nCurrentY)) ? 1:0;
-        //  game logic
+        if(bKey[3])
+        {
+            nCurrentRotation  += (!bRotateHold && doesPieceFit(nCurrentPiece, nCurrentRotation + 1, nCurrentX, nCurrentY)) ? 1:0;
+            bRotateHold = true;
+        }
+        else
+        {
+            bRotateHold =false;
+        }
+
+        if(bForceDown)
+        {
+            if(doesPieceFit(nCurrentPiece, nCurrentRotation, nCurrentX, nCurrentY + 1))
+            {
+                nCurrentY++;
+            }
+            else
+            {
+                //lock te current piece
+                for (int px = 0; px < 4; px++)
+                    for (int py = 0; py < 4; py++)
+                        if(tetromino[nCurrentPiece][rotate(px,py,nCurrentRotation)] == 'X')
+                        {
+                            pField[(nCurrentY + py) * nFieldWidth + (nCurrentX + px)] = nCurrentPiece + 1;
+                        }
+                //check for horizontal lines
+                for(int py = 0; py<4; py++)
+                    if(nCurrentY + py <nFieldHeight - 1)
+                    {
+                        bool bLine = true;
+                        for(int px = 1; px < nFieldWidth - 1; px++)
+                            bLine &= (pField[(nCurrentY + py) * nFieldWidth + px]) !=0;
+
+                        if(bLine)
+                        {
+                             for(int px = 1; px < nFieldWidth - 1; px++)
+                                pField[(nCurrentY + py) * nFieldWidth + px] = 8;
+                        }
+                    }
+
+                //choose next piece
+                nCurrentX = nFieldWidth/2;
+                nCurrentY = 0;
+                nCurrentRotation = 0;
+                nCurrentPiece = rand() % 7;
+
+                //if piece does nof fit
+                gameOver = !doesPieceFit(nCurrentPiece, nCurrentRotation, nCurrentX, nCurrentY);
+            }
+            nSpeedCounter = 0;
+        }
 
         // render output
 
