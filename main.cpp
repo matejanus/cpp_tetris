@@ -111,6 +111,11 @@ int main()
     WINDOW * win = newwin(nScreenHeight, nScreenWidth, 0, 0);
     wrefresh(win);
     wmove(win, 0, 0);
+    curs_set(0);
+    keypad(win, TRUE);
+    cbreak();
+    noecho();
+    nodelay(win, TRUE);
 
     bool gameOver = false;
 
@@ -145,6 +150,7 @@ int main()
         
         // display frame
         wprintw(win, screen);
+        wmove(win, 0, 0);
         wrefresh(win);
     }
     
