@@ -21,7 +21,6 @@ const int nFieldWidth = {12};
 
 int nScreenWidth = {80};
 int nScreenHeight = {20};
-unsigned char *pField = nullptr;
 
 int rotate(int px, int py, int r)
 {
@@ -39,7 +38,7 @@ int rotate(int px, int py, int r)
     return 0;
 }
 
-bool doesPieceFit(int nTetromino, int nRotaion, int nPosX, int nPosY)
+bool doesPieceFit(int nTetromino, int nRotaion, int nPosX, int nPosY, const std::array<unsigned char, (nFieldWidth * nFieldHeight)>& gameField)
 {
     for (int x = 0; x < 4; x++)
         for (int y=0; y<4; y++)
@@ -52,7 +51,7 @@ bool doesPieceFit(int nTetromino, int nRotaion, int nPosX, int nPosY)
             {
                 if (nPosY + y >= 0 && nPosY + y <nFieldHeight)
                 {
-                    if(tetromino[nTetromino][piece] == 'X' && pField[field] !=0)
+                    if(tetromino[nTetromino][piece] == 'X' && gameField[field] !=0)
                         return false;
                 }
             }
@@ -98,11 +97,7 @@ int main()
     tetromino[6].append("..XX");
     tetromino[6].append("..X.");
     tetromino[6].append("..X.");
-
-    pField = new unsigned char[nFieldWidth * nFieldHeight];
-    // std::array<unsigned char, (nFieldWidth * nFieldHeight)> pField2 = {0};
-    // std::unique_ptr<unsigned char []>
-    // auto pField = std::make_unique<unsigned char[]>(nFieldWidth * nFieldHeight);
+     std::array<unsigned char, (nFieldWidth * nFieldHeight)> pField = {0};
     for(int x=0; x<nFieldWidth; x++)
     {
         for(int y=0; y<nFieldHeight; y++)
@@ -113,6 +108,8 @@ int main()
 
 
     char *screen = new char[nScreenWidth*nScreenHeight];
+    // std::array<char, (nFieldWidth * nFieldHeight)> screen = {0};
+
     for (int i=0; i<nScreenWidth*nScreenHeight; i++)
     {
         screen[i] = L' ';
@@ -182,13 +179,13 @@ int main()
         }
         //  game logic
 
-        nCurrentX += (bKey[0] && doesPieceFit(nCurrentPiece, nCurrentRotation, nCurrentX + 1, nCurrentY)) ? 1:0;
-        nCurrentX -= (bKey[1] && doesPieceFit(nCurrentPiece, nCurrentRotation, nCurrentX - 1, nCurrentY)) ? 1:0;
-        nCurrentY += (bKey[2] && doesPieceFit(nCurrentPiece, nCurrentRotation, nCurrentX, nCurrentY + 1)) ? 1:0;
+        nCurrentX += (bKey[0] && doesPieceFit(nCurrentPiece, nCurrentRotation, nCurrentX + 1, nCurrentY, pField)) ? 1:0;
+        nCurrentX -= (bKey[1] && doesPieceFit(nCurrentPiece, nCurrentRotation, nCurrentX - 1, nCurrentY, pField)) ? 1:0;
+        nCurrentY += (bKey[2] && doesPieceFit(nCurrentPiece, nCurrentRotation, nCurrentX, nCurrentY + 1, pField)) ? 1:0;
 
         if(bKey[3])
         {
-            nCurrentRotation  += (!bRotateHold && doesPieceFit(nCurrentPiece, nCurrentRotation + 1, nCurrentX, nCurrentY)) ? 1:0;
+            nCurrentRotation  += (!bRotateHold && doesPieceFit(nCurrentPiece, nCurrentRotation + 1, nCurrentX, nCurrentY, pField)) ? 1:0;
             bRotateHold = true;
         }
         else
@@ -198,7 +195,7 @@ int main()
 
         if(bForceDown)
         {
-            if(doesPieceFit(nCurrentPiece, nCurrentRotation, nCurrentX, nCurrentY + 1))
+            if(doesPieceFit(nCurrentPiece, nCurrentRotation, nCurrentX, nCurrentY + 1, pField))
             {
                 nCurrentY++;
             }
@@ -244,7 +241,7 @@ int main()
                 nCurrentPiece = gen(rng);
 
                 //if piece does nof fit
-                gameOver = !doesPieceFit(nCurrentPiece, nCurrentRotation, nCurrentX, nCurrentY);
+                gameOver = !doesPieceFit(nCurrentPiece, nCurrentRotation, nCurrentX, nCurrentY, pField);
             }
             nSpeedCounter = 0;
         }
@@ -295,7 +292,6 @@ int main()
     }
     
     endwin();
-    delete[] pField;
     std::cout<<"Game over! Score: " <<nScore << std::endl;
     getchar();
     return 0;
