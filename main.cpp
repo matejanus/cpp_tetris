@@ -264,8 +264,8 @@ int main()
                     screen[(nCurrentY + py + 2) * nScreenWidth + (nCurrentX + px +2)] = nCurrentPiece + 65;
                 }
         
-        // sprintf_s(&screen[2 * nScreenWidth +nFieldWidth +6], 16, "SCORE: %8d", nScore);// TODO: find another way of appending to screen
-
+        snprintf(&screen[(nScreenHeight-1) * nScreenWidth + nFieldWidth + 6],16, "SCORE: %8d", nScore);// TODO: find another way of appending to screen
+        
         if(!vLines.empty())
         {
             wprintw(win, screen);
@@ -296,6 +296,7 @@ int main()
     
     endwin();
     delete[] pField;
-
+    std::cout<<"Game over! Score: " <<nScore << std::endl;
+    getchar();
     return 0;
 }
