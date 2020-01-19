@@ -7,6 +7,10 @@
 #include <vector>
 #include <memory>
 #include <random>
+#include <cstdio>
+#include <cwchar>
+#include <stdio.h> 
+#include <wchar.h>
 
 using namespace std::chrono_literals;
 
@@ -139,12 +143,14 @@ int main()
     int nSpeedCounter = 0;
     bool bForceDown = 0;
 
+    int nPieceCount = 0;
+    int nScore = 0;
     std::vector<int> vLines;
 
     std::random_device dev;
     std::mt19937 rng(dev());
     std::uniform_int_distribution<std::mt19937::result_type> gen(0,6);
-     int nCurrentPiece = gen(rng);
+    int nCurrentPiece = gen(rng);
     while (!gameOver)
     {
         //  Game timitng
@@ -205,6 +211,10 @@ int main()
                         {
                             pField[(nCurrentY + py) * nFieldWidth + (nCurrentX + px)] = nCurrentPiece + 1;
                         }
+                nPieceCount++;
+                if(nPieceCount % 10 == 0)
+                    if(nSpeed >=10 )
+                        nSpeed --;
                 //check for horizontal lines
                 for(int py = 0; py<4; py++)
                     if(nCurrentY + py < nFieldHeight - 1)
@@ -222,6 +232,11 @@ int main()
                         }
                     }
 
+                nScore +=25;
+                if(!vLines.empty())
+                {
+                    nScore += (1 << vLines.size()) *100;
+                }
                 //choose next piece
                 nCurrentX = nFieldWidth/2;
                 nCurrentY = 0;
@@ -248,6 +263,8 @@ int main()
                 {
                     screen[(nCurrentY + py + 2) * nScreenWidth + (nCurrentX + px +2)] = nCurrentPiece + 65;
                 }
+        
+        // sprintf_s(&screen[2 * nScreenWidth +nFieldWidth +6], 16, "SCORE: %8d", nScore);// TODO: find another way of appending to screen
 
         if(!vLines.empty())
         {
@@ -274,6 +291,7 @@ int main()
         wprintw(win, screen);
         wmove(win, 0, 0);
         wrefresh(win);
+
     }
     
     endwin();
