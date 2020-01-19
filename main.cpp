@@ -41,10 +41,13 @@ bool doesPieceFit(int nTetromino, int nRotaion, int nPosX, int nPosY)
 
             int field = (nPosY + y) *nFieldWidth + (nPosX + x);
 
-            if (nPosY + y >= 0 && nPosY + y <nFieldWidth)
+            if (nPosX + x >= 0 && nPosX +x < nFieldWidth)
             {
-                if(tetromino[nTetromino][piece] == 'X' && pField[field] !=0)
-                    return false;
+                if (nPosY + y >= 0 && nPosY + y <nFieldHeight)
+                {
+                    if(tetromino[nTetromino][piece] == 'X' && pField[field] !=0)
+                        return false;
+                }
             }
         }
 
