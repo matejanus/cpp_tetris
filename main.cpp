@@ -19,8 +19,8 @@ std::array<std::string, 7> tetromino;
 const int nFieldHeight = {18};
 const int nFieldWidth = {12};
 
-int nScreenWidth = {80};
-int nScreenHeight = {20};
+const int nScreenWidth = {80};
+const int nScreenHeight = {20};
 
 int rotate(int px, int py, int r)
 {
@@ -97,7 +97,9 @@ int main()
     tetromino[6].append("..XX");
     tetromino[6].append("..X.");
     tetromino[6].append("..X.");
+
      std::array<unsigned char, (nFieldWidth * nFieldHeight)> pField = {0};
+
     for(int x=0; x<nFieldWidth; x++)
     {
         for(int y=0; y<nFieldHeight; y++)
@@ -107,8 +109,7 @@ int main()
     }
 
 
-    char *screen = new char[nScreenWidth*nScreenHeight];
-    // std::array<char, (nFieldWidth * nFieldHeight)> screen = {0};
+    std::array<char, (nScreenWidth * nScreenHeight)> screen = {0};
 
     for (int i=0; i<nScreenWidth*nScreenHeight; i++)
     {
@@ -265,7 +266,7 @@ int main()
         
         if(!vLines.empty())
         {
-            wprintw(win, screen);
+            wprintw(win, screen.data());
             wmove(win, 0, 0);
             wrefresh(win);
             std::this_thread::sleep_for(400ms);
@@ -285,7 +286,7 @@ int main()
     }
         
         // display frame
-        wprintw(win, screen);
+        wprintw(win, screen.data());
         wmove(win, 0, 0);
         wrefresh(win);
 
