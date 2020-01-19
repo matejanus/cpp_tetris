@@ -128,8 +128,44 @@ int main()
     {
         //  Game timitng
         std::this_thread::sleep_for(50ms);
-
         // input
+        bool bKey[4] = {false};
+
+        int ch;
+        ch = wgetch(win);
+        switch(ch)
+        {
+            case KEY_RIGHT:
+                bKey[0] = true;
+                break;
+            case KEY_LEFT:
+                bKey[1] = true;
+                break;
+            case KEY_DOWN:
+                bKey[2] = true;
+                break;
+            case 122:
+                bKey[3] = true;
+                break;
+            default:
+                break;
+        }
+
+        if(bKey[0])
+        {
+            if(doesPieceFit(nCurrentPiece, nCurrentRotation, nCurrentX +1, nCurrentY))
+            {
+                nCurrentX++;  
+            }
+        }
+
+        if(bKey[1])
+        {
+            if(doesPieceFit(nCurrentPiece, nCurrentRotation, nCurrentX -1, nCurrentY))
+            {
+                nCurrentX--;  
+            }
+        }
 
         //  game logic
 
