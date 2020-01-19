@@ -2,6 +2,10 @@
 #include "includes/defines.hpp"
 #include <array>
 #include <curses.h>
+#include <chrono>
+#include <thread>
+
+using namespace std::chrono_literals;
 
 std::array<std::string, 7> tetromino; 
 
@@ -118,6 +122,7 @@ int main()
     while (!gameOver)
     {
         //  Game timitng
+        std::this_thread::sleep_for(50ms);
 
         // input
 
