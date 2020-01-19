@@ -151,22 +151,11 @@ int main()
                 break;
         }
 
-        if(bKey[0])
-        {
-            if(doesPieceFit(nCurrentPiece, nCurrentRotation, nCurrentX +1, nCurrentY))
-            {
-                nCurrentX++;  
-            }
-        }
+        nCurrentX += (bKey[0] && doesPieceFit(nCurrentPiece, nCurrentRotation, nCurrentX + 1, nCurrentY)) ? 1:0;
+        nCurrentX -= (bKey[1] && doesPieceFit(nCurrentPiece, nCurrentRotation, nCurrentX - 1, nCurrentY)) ? 1:0;
+        nCurrentY += (bKey[2] && doesPieceFit(nCurrentPiece, nCurrentRotation, nCurrentX, nCurrentY + 1)) ? 1:0;
 
-        if(bKey[1])
-        {
-            if(doesPieceFit(nCurrentPiece, nCurrentRotation, nCurrentX -1, nCurrentY))
-            {
-                nCurrentX--;  
-            }
-        }
-
+        nCurrentRotation  += (bKey[3] && doesPieceFit(nCurrentPiece, nCurrentRotation + 1, nCurrentX, nCurrentY)) ? 1:0;
         //  game logic
 
         // render output
